@@ -6,7 +6,7 @@ use lexer::tokenize;
 use parser::Parser;
 
 fn main() {
-    let input = "3 + 5 * (10 - 4)";
+    let input = "x = 3 + 5 * (10 - 4)";
     let tokens = tokenize(input);
     println!("Tokens: {:?}", tokens);
 

@@ -12,7 +12,24 @@ impl<'a> Parser<'a> {
     }
 
     pub fn parse(&mut self) -> Expr {
-        self.parse_expression()
+        self.parse_assignment()
+    }
+
+    fn parse_assignment(&mut self) -> Expr {
+        let expr = self.parse_expression();
+        if let Some(Token::Assign) = self.current_token() {
+            self.pos += 1;
+            if let Expr::Variable(name) = expr {
+                let value = self.parse_expression();
+                return Expr::Assign {
+                    name,
+                    expr: Box::new(value),
+                };
+            } else {
+                panic!("Expected variable name before '='");
+            }
+        }
+        expr
     }
 
     fn parse_expression(&mut self) -> Expr {
@@ -66,6 +83,10 @@ impl<'a> Parser<'a> {
             Some(Token::Number(n)) => {
                 self.pos += 1;
                 Expr::Number(n)
+            }
+            Some(Token::Identifier(ref name)) => {
+                self.pos += 1;
+                Expr::Variable(name.clone())
             }
             Some(Token::LParen) => {
                 self.pos += 1;

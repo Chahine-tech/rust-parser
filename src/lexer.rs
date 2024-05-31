@@ -7,6 +7,8 @@ pub enum Token {
     Divide,
     LParen,
     RParen,
+    Identifier(String),
+    Assign,
 }
 
 pub fn tokenize(input: &str) -> Vec<Token> {
@@ -26,6 +28,22 @@ pub fn tokenize(input: &str) -> Vec<Token> {
                     }
                 }
                 tokens.push(Token::Number(num));
+            }
+            'a'..='z' | 'A'..='Z' => {
+                let mut ident = String::new();
+                while let Some(&ch) = chars.peek() {
+                    if ch.is_alphanumeric() || ch == '_' {
+                        ident.push(ch);
+                        chars.next();
+                    } else {
+                        break;
+                    }
+                }
+                tokens.push(Token::Identifier(ident));
+            }
+            '=' => {
+                tokens.push(Token::Assign);
+                chars.next();
             }
             '+' => {
                 tokens.push(Token::Plus);
